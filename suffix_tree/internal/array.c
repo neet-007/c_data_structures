@@ -1,4 +1,5 @@
 #include "array.h"
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -24,6 +25,62 @@ array_t *array_new(size_t capacity, array_type_t type) {
     arr->type = type;
 
     return arr;
+}
+
+array_t *array_new_zero(size_t capacity, array_type_t type, void *zero) {
+    if (zero == NULL){
+        return NULL;
+    }
+
+    array_t *array = array_new(capacity, type);
+    if (array == NULL) {
+        return NULL;
+    }
+
+    for (size_t i = 0; i < array->capacity; i++) {
+        void *ptr = NULL;
+        switch (type) {
+            case INT:
+                ptr = malloc(sizeof(int));
+                if (ptr == NULL) {
+                    array_free(&array);
+                    return NULL;
+                }
+                *((int *)ptr) = *((int *)zero); 
+                break;
+
+            case CHAR:
+                ptr = malloc(sizeof(char));
+                if (ptr == NULL) {
+                    array_free(&array);
+                    return NULL;
+                }
+                *((char *)ptr) = *((char *)zero); 
+                break;
+
+            default:
+                array_free(&array);
+                return NULL;
+        }
+        array->elems[i] = ptr;
+    }
+
+    return array;
+}
+
+void array_free(array_t **array) {
+    if (array == NULL || *array == NULL) {
+        return;
+    }
+
+    for (size_t i = 0; i < (*array)->size; i++) {
+        free((*array)->elems[i]);
+    }
+
+    free((*array)->elems);
+
+    free(*array);
+    *array = NULL; 
 }
 
 int array_index_of(array_t *array, void *val) {
