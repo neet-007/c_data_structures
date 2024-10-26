@@ -1,4 +1,5 @@
 #include "array.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -56,32 +57,28 @@ int array_index_of(array_t *array, void *val) {
     return -1;
 }
 
-bool array_append(array_t *array, void *val){
-    if (array == NULL || val == NULL){
+bool array_append(array_t **array, void *val) {
+    if (array == NULL || *array == NULL || val == NULL) {
         return false;
     }
 
-    if (array->size >= array->capacity){
-        if (!array_resize(array)){
-            return false;
+    if ((*array)->size >= (*array)->capacity) {
+        if (!array_resize(array)) { 
+            return false; 
         }
     }
 
-    array->elems[array->size++] = val;
-
-    if (array->size >= array->capacity){
-        array_resize(array);
-    }
+    (*array)->elems[(*array)->size++] = val; 
 
     return true;
 }
 
-bool array_remove(array_t *array, void *val){
-    if (array == NULL || val == NULL){
+bool array_remove(array_t **array, void *val){
+    if (array == NULL || *array == NULL || val == NULL){
         return false;
     }
 
-    int index = array_index_of(array, val);
+    int index = array_index_of(*array, val);
     if (index == -1){
         return false;
     }
@@ -93,20 +90,20 @@ bool array_remove(array_t *array, void *val){
     return true;
 }
 
-void *array_remove_index(array_t *array, size_t index){
-    if (array == NULL || array->size <= index){
+void *array_remove_index(array_t **array, size_t index){
+    if (array == NULL || *array == NULL || (* array)->size <= index){
         return NULL;
     }
     
-    void *val= array->elems[index];
+    void *val= (*array)->elems[index];
 
-    for (size_t i = index; i < array->size - 1; i++){
-        array->elems[i] = array->elems[i + 1];
+    for (size_t i = index; i < (*array)->size - 1; i++){
+        (*array)->elems[i] = (*array)->elems[i + 1];
     }
 
-    array->elems[--array->size] = NULL;
+    (*array)->elems[--(*array)->size] = NULL;
 
-    if (array->size < array->capacity / 4){
+    if ((*array)->size < (*array)->capacity / 4){
         array_resize(array);
     }
 
@@ -114,27 +111,36 @@ void *array_remove_index(array_t *array, size_t index){
 }
 
 
-bool array_resize(array_t *array){
-    if (array == NULL){
+bool array_resize(array_t **array) {
+    if (array == NULL || *array == NULL) {
         return false;
     }
 
+    array_t *old_array = *array;  
     array_t *new_array = NULL;
-    if (array->size >= array->capacity){
-        new_array = array_new(array->capacity * 2, array->type);
-    }else{
-        new_array = array_new(array->capacity / 2, array->type);
+
+    size_t new_capacity = 1;
+
+    if (old_array->size >= old_array->capacity){
+        new_capacity = old_array->capacity * 2;
+    }else if (old_array->capacity > 1){
+        new_capacity = old_array->capacity / 2;
     }
 
-    if (new_array == NULL){
-        return false;
+    new_array = array_new(new_capacity, old_array->type);
+    if (new_array == NULL) {
+        return false; 
     }
 
-    for (size_t i = 0; i < array->size; i++){
-        new_array->elems[i] = array->elems[i];
+    for (size_t i = 0; i < old_array->size; i++) {
+        new_array->elems[i] = old_array->elems[i]; 
     }
 
-    new_array->size = array->size;
+    new_array->size = old_array->size;
 
+    free(old_array->elems);
+    free(old_array);
+
+    *array = new_array; 
     return true;
 }

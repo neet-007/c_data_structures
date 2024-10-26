@@ -15,7 +15,7 @@ typedef struct Array {
 
 array_t *array_new(size_t capacity, array_type_t type);
 int array_index_of(array_t *array, void *val);
-bool array_append(array_t *array, void *val);
-bool array_remove(array_t *array, void *val);
-void *array_remove_index(array_t *array, size_t index);
-bool array_resize(array_t *array);
+bool array_append(array_t **array, void *val);
+bool array_remove(array_t **array, void *val);
+void *array_remove_index(array_t **array, size_t index);
+bool array_resize(array_t **array);

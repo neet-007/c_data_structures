@@ -2,7 +2,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Iinclude -w  # Include the directory where exercise.h is located
 TARGET = main
-SRC_FILES = main.c data_structure.c suffix_tree.c lcp_array.c # Add exercise.c as a source file
+SRC_FILES = main.c array.c # data_structure.c suffix_tree.c lcp_array.c  Add exercise.c as a source file
 
 # Build target
 all: $(TARGET)
