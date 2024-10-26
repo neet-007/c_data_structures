@@ -1,5 +1,8 @@
 #include "tests/array_test.h"
+#include "tests/suffix_array_test.h"
 
 int main() {
-    return arr_test();
+    sort_chars_test();
+
+    return 0;
 }

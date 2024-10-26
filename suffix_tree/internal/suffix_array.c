@@ -1,5 +1,6 @@
 #include "suffix_array.h"
 #include "array.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -24,16 +25,19 @@ array_t *sort_chars(char *s, array_t *alphabet){
         return NULL;
     }
 
-    for (size_t i = 0; i < (size_t) s_len; i++){
-        (*((int *)(count->elems[s[(int)i]])))++;
+    for (size_t i = 0; i < (size_t)s_len; i++) {
+        int index = (int)(s[i]) - (*(int*)alphabet->elems[0]);  
+        if (index >= 0 && index < 26) {  
+            (*((int *)(count->elems[index])))++;
+        }
+    }
+    
+    for (size_t i = 1; i < (size_t)26; i++) {
+        (*((int *)(count->elems[i]))) += (*((int *)(count->elems[i - 1])));
     }
 
-    for (size_t i = 1; i < (size_t)s_len; i++){
-        (*((int *)(count->elems[s[(int)i]]))) = (*((int *)(count->elems[s[(int)i - 1]])));
-    }
-
-    for (size_t i = s_len - 1; i >= (size_t)0; i--){
-        int index = s[(int)i]; 
+    for (int i = s_len - 1; i >= 0; i--){
+        int index = (int)(s[i]) - (*(int*)alphabet->elems[0]);  
 
         *((int *)(count->elems[index])) -= 1;
 
