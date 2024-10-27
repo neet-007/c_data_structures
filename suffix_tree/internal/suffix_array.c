@@ -5,7 +5,7 @@
 #include <string.h>
 
 array_t *sort_chars(char *s, array_t *alphabet){
-    if (alphabet == NULL){
+    if (s == NULL || alphabet == NULL){
         return NULL;
     }
 
@@ -52,7 +52,40 @@ array_t *sort_chars(char *s, array_t *alphabet){
 
     return order;
 }
-array_t *compute_classess(char *s, array_t *order);
+array_t *compute_classess(char *s, array_t *order){
+    if (s == NULL || order == NULL){
+        return NULL;
+    }
+
+    int s_len = strlen(s);
+    int *zero = malloc(sizeof(int));
+    if (zero == NULL){
+        return NULL;
+    }
+
+    *zero = 0;
+
+    array_t *classes= array_new_zero(s_len, INT, zero);
+    if (classes== NULL){
+        array_free(&order);
+        return NULL;
+    }
+
+    for (size_t i = 1; i < order->size; i++){
+        int index_1 = (*(int *)order->elems[i]);
+        int index_2 = (*(int *)order->elems[i - 1]);
+
+        if (s[index_1] != s[index_2]){
+            (*(int *)classes->elems[index_1]) = (*(int *)classes->elems[index_2]) + 1;
+            continue;
+        }
+
+        (*(int *)classes->elems[index_1]) = (*(int *)classes->elems[index_2]);
+    } 
+
+    return classes;
+}
+
 void sorting_doubles(char *s, size_t l, array_t **order, array_t *classes);
 void update_classes(char *s, size_t l, array_t *new_order, array_t **classes);
 array_t *build_suffix_array(char *s);

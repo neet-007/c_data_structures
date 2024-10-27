@@ -3,6 +3,7 @@
 
 int main() {
     sort_chars_test();
+    compute_classess_test();
 
     return 0;
 }
