@@ -22,3 +22,4 @@ bool array_append(array_t **array, void *val);
 bool array_remove(array_t **array, void *val);
 void *array_remove_index(array_t **array, size_t index);
 bool array_resize(array_t **array);
+bool array_copy(array_t **array, array_t *copy);

@@ -50,6 +50,8 @@ array_t *sort_chars(char *s, array_t *alphabet){
         *((int *)(order->elems[updated_count])) = i;
     }
 
+    array_free(&count);
+    free(zero);
     return order;
 }
 array_t *compute_classess(char *s, array_t *order){
@@ -83,9 +85,62 @@ array_t *compute_classess(char *s, array_t *order){
         (*(int *)classes->elems[index_1]) = (*(int *)classes->elems[index_2]);
     } 
 
+    free(zero);
     return classes;
 }
 
-void sorting_doubles(char *s, size_t l, array_t **order, array_t *classes);
-void update_classes(char *s, size_t l, array_t *new_order, array_t **classes);
+bool sorting_doubles(char *s, size_t l, array_t **order, array_t *classes){
+    if (s == NULL || order == NULL || *order == NULL || classes == NULL){
+        return false;
+    }
+
+    int s_len = strlen(s);
+    int *zero = malloc(sizeof(int));
+    if (zero == NULL){
+        return false;
+    }
+
+    *zero = 0;
+    array_t *count = array_new_zero((*order)->capacity, (*order)->type, zero);
+    if (count == NULL){
+        return false;
+    }
+
+    array_t *prev_order = array_new_zero((*order)->capacity, (*order)->type, zero);
+    if (prev_order == NULL){
+        array_free(&count);
+        return false;
+    }
+    
+    bool res = array_copy(&prev_order, *order);
+    if (res == false){
+        array_free(&count);
+        array_free(&prev_order);
+        return false;
+    }
+
+    for (size_t i = 0; i < classes->size; i++){
+        (*(int *)count->elems[(*(int *)classes->elems[i])])++;
+    }
+    
+    for (size_t i = 1; i < count->size; i++){
+        (*(int *)count->elems[i]) += (*(int *)count->elems[i - 1]);
+    }
+
+    for (int i = s_len - 1; i >= 0; i--){
+        int start = ((*(int *)prev_order->elems[i]) - l + s_len) % s_len;
+        int cl = (*(int *)classes->elems[start]);
+    
+        (*(int *)count->elems[cl])--;
+        (*(int *)(*order)->elems[(*(int *)count->elems[cl])]) = start;
+    }
+
+    array_free(&prev_order);
+    array_free(&count);
+    free(zero);
+
+    return true;
+}
+
+bool update_classes(char *s, size_t l, array_t *new_order, array_t **classes);
 array_t *build_suffix_array(char *s);

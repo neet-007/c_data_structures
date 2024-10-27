@@ -202,3 +202,28 @@ bool array_resize(array_t **array) {
     *array = new_array; 
     return true;
 }
+
+bool array_copy(array_t **array, array_t *copy){
+    if (array == NULL || *array == NULL || copy == NULL || copy->size > (*array)->capacity || copy->type != (*array)->type){
+        return false;
+    }
+
+    switch (copy->type) {
+        case INT:{
+            for (size_t i = 0; i < copy->size; i++){
+                (*(int *)(*array)->elems[i]) = (*(int *)copy->elems[i]);
+            }
+        }
+        break;
+        case CHAR:{
+            for (size_t i = 0; i < copy->size; i++){
+                (*(char *)(*array)->elems[i]) = (*(char *)copy->elems[i]);
+            }
+        }
+        break;
+        default:
+            return false;
+    }
+    
+    return true;
+}
