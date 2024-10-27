@@ -3,6 +3,7 @@
 #include "../internal/array.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 void sort_chars_test(){
     char *s = "hellotest";
@@ -21,16 +22,23 @@ void sort_chars_test(){
 
     array_t *sorted = sort_chars(s, alphabet);
     if (sorted == NULL){
+        printf("sorted is null");
         exit(1);
     }
 
-    char *exp = "ehllostt";
+    if (sorted->size != strlen(s)){
+        printf("size of sorted %zu does not equal size of s %zu", sorted->size, strlen(s));
+        exit(1);
+    }
+
+    char *exp = "eehllostt";
     for (size_t i = 0; i < sorted->size; i++){
-        if (*((char*)sorted->elems[i]) != exp[(int)i]){
-            printf("not sorder exp %c got %c\n", exp[(int)i], *((char*)sorted->elems[i]));
+        if (s[*((int*)sorted->elems[i])] != exp[(int)i]){
+            printf("not sorder exp %c got %c\n", exp[(int)i], s[*((int*)sorted->elems[i])]);
             exit(1);
         }
     }
+
 
     printf("test passed\n");
 

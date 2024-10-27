@@ -5,6 +5,10 @@
 #include <string.h>
 
 array_t *sort_chars(char *s, array_t *alphabet){
+    if (alphabet == NULL){
+        return NULL;
+    }
+
     int s_len = strlen(s);
     int *zero = malloc(sizeof(int));
     if (zero == NULL){
@@ -12,14 +16,14 @@ array_t *sort_chars(char *s, array_t *alphabet){
     }
 
     *zero = -1;
-    array_t *order = array_new_zero(s_len, INT, zero);
+    array_t *order = array_new_zero((size_t)s_len, INT, zero);
     if (order == NULL){
         return NULL;
     }
 
     *zero = 0;
 
-    array_t *count= array_new_zero(26, INT, zero);
+    array_t *count= array_new_zero(alphabet->size, INT, zero);
     if (count== NULL){
         array_free(&order);
         return NULL;
@@ -27,12 +31,12 @@ array_t *sort_chars(char *s, array_t *alphabet){
 
     for (size_t i = 0; i < (size_t)s_len; i++) {
         int index = (int)(s[i]) - (*(int*)alphabet->elems[0]);  
-        if (index >= 0 && index < 26) {  
+        if (index >= 0 && index < alphabet->size) {  
             (*((int *)(count->elems[index])))++;
         }
     }
     
-    for (size_t i = 1; i < (size_t)26; i++) {
+    for (size_t i = 1; i < alphabet->size; i++) {
         (*((int *)(count->elems[i]))) += (*((int *)(count->elems[i - 1])));
     }
 
@@ -43,7 +47,7 @@ array_t *sort_chars(char *s, array_t *alphabet){
 
         int updated_count = *((int *)(count->elems[index]));
 
-        *((int *)(order->elems[updated_count])) = (int)i;
+        *((int *)(order->elems[updated_count])) = i;
     }
 
     return order;

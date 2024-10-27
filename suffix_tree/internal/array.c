@@ -65,6 +65,7 @@ array_t *array_new_zero(size_t capacity, array_type_t type, void *zero) {
         array->elems[i] = ptr;
     }
 
+    array->size = capacity;
     return array;
 }
 
