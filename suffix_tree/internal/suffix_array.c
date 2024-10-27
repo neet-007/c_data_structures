@@ -1,5 +1,6 @@
 #include "suffix_array.h"
 #include "array.h"
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -119,6 +120,7 @@ bool sorting_doubles(char *s, size_t l, array_t **order, array_t *classes){
         return false;
     }
 
+    prev_order->size = (*order)->size;
     for (size_t i = 0; i < classes->size; i++){
         (*(int *)count->elems[(*(int *)classes->elems[i])])++;
     }
@@ -142,5 +144,76 @@ bool sorting_doubles(char *s, size_t l, array_t **order, array_t *classes){
     return true;
 }
 
-bool update_classes(char *s, size_t l, array_t *new_order, array_t **classes);
-array_t *build_suffix_array(char *s);
+bool update_classes(char *s, size_t l, array_t *new_order, array_t **classes){
+    if (s == NULL || new_order == NULL || classes == NULL || (*classes) == NULL){
+        return false;
+    }
+
+    int len_s = strlen(s);
+    int *zero = malloc(sizeof(int));
+    if (zero == NULL){
+        return false;
+    }
+
+    array_t *old_classes = array_new_zero((*classes)->capacity, (*classes)->type, zero);
+    if (old_classes == NULL){
+        free(zero);
+        return false;
+    }
+
+    bool res = array_copy(&old_classes, *classes);
+    if (res == false){
+        free(zero);
+        array_free(&old_classes);
+        return false;
+    }
+
+    old_classes->size = (*classes)->size;
+    
+    for (size_t i = 1; i < new_order->size; i++){
+        int curr = (*(int *)new_order->elems[i]);
+        int prev = (*(int *)new_order->elems[i - 1]);
+        int curr_mid = (curr + l) % len_s;
+        int prev_mid = (prev+ l) % len_s;
+
+        if ((*(int *)old_classes->elems[curr]) != (*(int *)old_classes->elems[prev]) || (*(int *)old_classes->elems[curr_mid]) != (*(int *)old_classes->elems[prev_mid])){
+            (*(int *)(*classes)->elems[curr]) = (*(int *)(*classes)->elems[prev]) + 1;
+            continue;
+        }
+        (*(int *)(*classes)->elems[curr]) = (*(int *)(*classes)->elems[prev]);
+    }
+
+    array_free(&old_classes);
+    free(zero);
+    return true;
+}
+
+array_t *build_suffix_array(char *s, array_t *alphabet){
+    if (s == NULL){
+        return NULL;
+    }
+
+    array_t *order = sort_chars(s, alphabet);
+    if (order == NULL){
+        return NULL;
+    }
+
+    array_t *classes = compute_classess(s, order);
+    if (classes == NULL){
+        array_free(&order);
+        return NULL;
+    }
+
+    size_t l = (size_t)1;
+    int s_len = strlen(s);
+
+    while (l < s_len) {
+        sorting_doubles(s, l,&order, classes);
+        update_classes(s, l, order, &classes);
+
+        l *= 2;
+    }
+
+    array_free(&classes);
+    return order;
+}

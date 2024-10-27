@@ -2,7 +2,6 @@
 #include "tests/suffix_array_test.h"
 
 int main() {
-    sorting_doubles_test();
-
+    update_classes_test();
     return 0;
 }
