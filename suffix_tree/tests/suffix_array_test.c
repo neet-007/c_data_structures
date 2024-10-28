@@ -275,5 +275,8 @@ void build_suffix_array_test(){
         }
     }
 
+    free(s);
+    array_free(&alphabet);
+    array_free(&suffix_array);
     printf("suffix array test passed\n");
 }
