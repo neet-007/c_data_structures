@@ -214,6 +214,7 @@ array_t *build_suffix_array(char *s, array_t *alphabet){
         l *= 2;
     }
 
+    printf("im gheeeere\n");
     array_free(&classes);
     return order;
 }

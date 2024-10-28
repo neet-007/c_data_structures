@@ -2,6 +2,6 @@
 #include "tests/suffix_array_test.h"
 
 int main() {
-    update_classes_test();
+    build_suffix_array_test();
     return 0;
 }

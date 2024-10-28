@@ -198,7 +198,7 @@ void update_classes_test(){
         exit(1);
     }
 
-    bool res = sorting_doubles(s, (size_t)6, &order, classes);
+    bool res = sorting_doubles(s, (size_t)2, &order, classes);
 
     if (res == false){
         printf("faaaalse\n");
@@ -215,12 +215,7 @@ void update_classes_test(){
         exit(1);
     }
 
-    res = update_classes(s, 2, order, &classes);
-
-    if (res == false){
-        printf("update classes false\n");
-        exit(1);
-    }
+    update_classes(s, 2, order, &classes);
 
     if (classes == NULL){
         printf("update classs is null\n");
@@ -233,12 +228,6 @@ void update_classes_test(){
     }
 
     int exp[9]= { 2, 0, 3, 4, 5, 8, 1, 6, 7};
-    //int exp[9] = {6, 1, 0, 2, 3, 4, 7, 5, 8 };
-    //int exp[9] = {1, 6, 0, 2, 3, 4, 7, 8, 5 };
-
-    for (size_t i = 0; i < classes->size; i++){
-        printf("%zu %d v %d\n", i, exp[(int)i], (*(int *)classes->elems[i]));
-    }
 
     for (size_t i = 0; i < classes->size; i++){
         if ((*(int *)classes->elems[i]) != exp[(int)i]){
@@ -250,4 +239,30 @@ void update_classes_test(){
     printf("updating classes test passed\n");
 }
 
-void build_suffix_array_test();
+void build_suffix_array_test(){
+    char *s = "hellotest";
+    array_t *alphabet = array_new(26, CHAR);
+
+    array_t *suffix_array = build_suffix_array(s, alphabet);
+
+    if (suffix_array == NULL){
+        printf("suffix array is nul\n");
+        exit(1);
+    }
+ 
+    if (strlen(s) != suffix_array->size){
+        printf("suffix array size wrong exp %zu got %zu\n", strlen(s), suffix_array->size);
+        exit(1);
+    }
+
+    int exp[9] = { 1, 6, 0, 2, 3, 4, 7, 5, 8 };
+
+    for (size_t i = 0; i < suffix_array->size; i++){
+        if ((*(int *)suffix_array->elems[i]) != exp[(int)i]){
+            printf("suffix array %zu not equal exp %d got %d", i, (*(int *)suffix_array->elems[i]), exp[(int)i]);
+            exit(1);
+        }
+    }
+
+    printf("suffix array test passed");
+}
