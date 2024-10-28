@@ -243,6 +243,17 @@ void build_suffix_array_test(){
     char *s = "hellotest";
     array_t *alphabet = array_new(26, CHAR);
 
+    for (char i = 97; i < 123; i++){
+        char *c = (char *)malloc(sizeof(char));
+        if (c == NULL){
+            printf("could not allocate memory i %c\n", i);
+            exit(1);
+        }
+
+        *c = i;
+        array_append(&alphabet, c);
+    }
+
     array_t *suffix_array = build_suffix_array(s, alphabet);
 
     if (suffix_array == NULL){
@@ -264,5 +275,5 @@ void build_suffix_array_test(){
         }
     }
 
-    printf("suffix array test passed");
+    printf("suffix array test passed\n");
 }
